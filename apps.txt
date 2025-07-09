@@ -3,3 +3,4 @@ iterm2
 visual-studio-code
 windsurf
 cursor
+--cask docker
