@@ -1,0 +1,14 @@
+dbaeumer.vscode-eslint
+fosshaas.fontsize-shortcuts
+GitHub.copilot
+GitHub.copilot-chat
+GitHub.vscode-pull-request-github
+eamodio.gitlens
+unifiedjs.vscode-mdx
+quicktype.quicktype
+vunguyentuan.vscode-postcss
+esbenp.prettier-vscode
+MylesMurphy.prettify-ts
+YoavBls.pretty-ts-errors
+ChakrounAnas.turbo-console-log
+vscode-icons-team.vscode-icons
