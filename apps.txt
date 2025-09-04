@@ -4,3 +4,7 @@ visual-studio-code
 windsurf
 cursor
 --cask docker
+--cask zoom
+--cask obsidian
+--cask grammarly-desktop
+--cask raycast
