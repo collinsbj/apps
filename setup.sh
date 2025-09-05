@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -26,9 +25,18 @@ fi
 if [[ -f apps.txt ]]; then
   if [[ -s apps.txt ]]; then
     echo "[INFO] Installing Homebrew apps from apps.txt..."
-    if ! xargs brew install < apps.txt; then
-      error_exit "Failed to install one or more Homebrew apps. Check apps.txt and Homebrew logs."
-    fi
+    # Install each app individually and report failures
+    while IFS= read -r app || [[ -n "$app" ]]; do
+      # Trim whitespace first
+      app=$(echo "$app" | xargs)
+      # Skip empty lines and comments
+      if [[ -n "$app" && ! "$app" =~ ^# ]]; then
+        echo "[INFO] Installing Homebrew app: $app"
+        if ! brew install $app; then
+          echo "[WARNING] Failed to install Homebrew app: $app" >&2
+        fi
+      fi
+    done < apps.txt
   else
     echo "[INFO] apps.txt is empty. No Homebrew apps to install."
   fi
@@ -42,7 +50,10 @@ if [[ -f vs-code-extensions.txt ]]; then
     echo "[INFO] Installing VS Code extensions from vs-code-extensions.txt..."
     # Install each extension and report failures
     while IFS= read -r ext || [[ -n "$ext" ]]; do
-      if [[ -n "$ext" ]]; then
+      # Trim whitespace first
+      ext=$(echo "$ext" | xargs)
+      # Skip empty lines and comments
+      if [[ -n "$ext" && ! "$ext" =~ ^# ]]; then
         echo "[INFO] Installing VS Code extension: $ext"
         if ! code --install-extension "$ext"; then
           echo "[WARNING] Failed to install VS Code extension: $ext" >&2
