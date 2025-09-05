@@ -12,26 +12,31 @@ error_exit() {
 }
 
 # Check for Homebrew
+# This checks if the 'brew' command is available in the system PATH
 if ! command -v brew >/dev/null 2>&1; then
   error_exit "Homebrew is not installed. Please install Homebrew first: https://brew.sh/"
 fi
 
 # Check for VS Code CLI
+# This checks if the 'code' command is available in the system PATH
 if ! command -v code >/dev/null 2>&1; then
   error_exit "VS Code CLI ('code') is not installed or not in PATH. Launch VS Code, open Command Palette, and run 'Shell Command: Install 'code' command in PATH'."
 fi
 
 # Install Homebrew apps from apps.txt
+# This checks if the apps.txt file exists in the current directory
 if [[ -f apps.txt ]]; then
+  # This checks if apps.txt has content (is not empty)
   if [[ -s apps.txt ]]; then
     echo "[INFO] Installing Homebrew apps from apps.txt..."
     # Install each app individually and report failures
     while IFS= read -r app || [[ -n "$app" ]]; do
       # Trim whitespace first
       app=$(echo "$app" | xargs)
-      # Skip empty lines and comments
+      # This checks if the line is not empty and does not start with a '#' comment
       if [[ -n "$app" && ! "$app" =~ ^# ]]; then
         echo "[INFO] Installing Homebrew app: $app"
+        # This checks if the brew install command failed
         if ! brew install $app; then
           echo "[WARNING] Failed to install Homebrew app: $app" >&2
         fi
@@ -45,16 +50,19 @@ else
 fi
 
 # Install VS Code extensions from vs-code-extensions.txt
+# This checks if the vs-code-extensions.txt file exists in the current directory
 if [[ -f vs-code-extensions.txt ]]; then
+  # This checks if vs-code-extensions.txt has content (is not empty)
   if [[ -s vs-code-extensions.txt ]]; then
     echo "[INFO] Installing VS Code extensions from vs-code-extensions.txt..."
     # Install each extension and report failures
     while IFS= read -r ext || [[ -n "$ext" ]]; do
       # Trim whitespace first
       ext=$(echo "$ext" | xargs)
-      # Skip empty lines and comments
+      # This checks if the line is not empty and does not start with a '#' comment
       if [[ -n "$ext" && ! "$ext" =~ ^# ]]; then
         echo "[INFO] Installing VS Code extension: $ext"
+        # This checks if the extension install command failed
         if ! code --install-extension "$ext"; then
           echo "[WARNING] Failed to install VS Code extension: $ext" >&2
         fi
