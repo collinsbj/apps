@@ -11,6 +11,10 @@ error_exit() {
   exit 1
 }
 
+# Arrays to track failed installations
+failed_apps=()
+failed_extensions=()
+
 # Check for Homebrew
 # This checks if the 'brew' command is available in the system PATH
 if ! command -v brew >/dev/null 2>&1; then
@@ -39,6 +43,7 @@ if [[ -f apps.txt ]]; then
         # This checks if the brew install command failed
         if ! brew install $app; then
           echo "[WARNING] Failed to install Homebrew app: $app" >&2
+          failed_apps+=("$app")
         fi
       fi
     done < apps.txt
@@ -65,6 +70,7 @@ if [[ -f vs-code-extensions.txt ]]; then
         # This checks if the extension install command failed
         if ! code --install-extension "$ext"; then
           echo "[WARNING] Failed to install VS Code extension: $ext" >&2
+          failed_extensions+=("$ext")
         fi
       fi
     done < vs-code-extensions.txt
@@ -76,3 +82,30 @@ else
 fi
 
 echo "[SUCCESS] Setup complete!"
+
+# Display summary of failed installations if any
+if [[ ${#failed_apps[@]} -gt 0 ]] || [[ ${#failed_extensions[@]} -gt 0 ]]; then
+  echo ""
+  echo "[SUMMARY] Some installations failed:"
+  
+  if [[ ${#failed_apps[@]} -gt 0 ]]; then
+    echo ""
+    echo "Failed Homebrew apps:"
+    for app in "${failed_apps[@]}"; do
+      echo "  - $app"
+    done
+  fi
+  
+  if [[ ${#failed_extensions[@]} -gt 0 ]]; then
+    echo ""
+    echo "Failed VS Code extensions:"
+    for ext in "${failed_extensions[@]}"; do
+      echo "  - $ext"
+    done
+  fi
+  
+  echo ""
+  echo "[INFO] You can manually retry installing the failed items later."
+else
+  echo "[INFO] All installations completed successfully!"
+fi
